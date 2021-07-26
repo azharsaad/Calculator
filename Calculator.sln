@@ -1,25 +1,111 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31424.327
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calculator", "Calculator\Calculator.csproj", "{AB57713F-7B09-4F7F-AD7B-A4891CCA3AC3}"
-EndProject
-Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{AB57713F-7B09-4F7F-AD7B-A4891CCA3AC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AB57713F-7B09-4F7F-AD7B-A4891CCA3AC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AB57713F-7B09-4F7F-AD7B-A4891CCA3AC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AB57713F-7B09-4F7F-AD7B-A4891CCA3AC3}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {D72B813D-D81B-4FFA-AE91-930A616792F8}
-	EndGlobalSection
-EndGlobal
+using System;
+
+using System.Linq;
+
+using System.Text.RegularExpressions;
+
+using System.Threading;
+
+namespace Calculator
+{
+    class Program
+    {
+        private static void Main(string[] args)
+        {
+            Welcome();
+            while (true)
+            {
+                Console.WriteLine("Calculation of the Operations:");
+                bool calculatorOn = true;
+                while (calculatorOn)
+                {
+                    calculatorOn = CalculatorOn();
+                }
+            }
+        }
+        private static void Welcome()
+        {
+            Console.WriteLine(
+                "\n\n  -+-+-+---+---+----+----+--- Calculator (Using Regex in .Net!)---+------+----+---+-+-+-" +
+                "\n\n You can perform 4 different operations" +
+                "\n\n\t\t\t\t`+` `-` `*` `/`  ");
+        }
+
+
+
+        public static void Calculate(string input)
+        {
+            //Regex
+            var number = Regex.Matches(input, "[0-9]+").Cast<Match>().Select(m => m.Value).ToArray();
+            var operation = Regex.Matches(input, @"[+-\/*]").Cast<Match>().Select(m => m.Value).ToArray();
+
+            try
+            {
+                int[] numbersToBeCalculated = Array.ConvertAll(number, int.Parse);
+                char[] operations = Array.ConvertAll(operation, char.Parse);
+
+                if (operations.Length >= numbersToBeCalculated.Length)
+                {
+                    Console.WriteLine("Wrong entry. Try again using one or more operations");
+                    Calculate(Console.ReadLine());
+                }
+                double result = numbersToBeCalculated[0];
+                var j = 0;
+                for (var i = 1; i < numbersToBeCalculated.Length; i++)
+                {
+                    switch (operations[j])
+                    {
+                        case '+':
+                            {
+                                result += numbersToBeCalculated[i];
+                                break;
+                            }
+                        case '-':
+                            {
+                                result -= numbersToBeCalculated[i];
+                                break;
+                            }
+                        case '*':
+                            {
+                                result *= numbersToBeCalculated[i];
+                                break;
+                            }
+                        case '/':
+                            {
+                                result /= numbersToBeCalculated[i];
+                                break;
+                            }
+                        default:
+                            break;
+                    }
+                    j++;
+                }
+                Console.WriteLine("Result: {0}", result);
+                Console.WriteLine("\n Try another calculation \n");
+            }
+            catch (OverflowException)
+            {
+                Console.WriteLine("input was too long to calculate - You have a limit of 10-digits");
+            }
+            catch(IndexOutOfRangeException)
+            {
+                Console.WriteLine("operation reached out of range");
+            }
+            Calculate(Console.ReadLine());
+        }
+
+
+        private static bool CalculatorOn()
+        {
+            var userInput = Console.ReadLine();
+            if (String.IsNullOrEmpty(userInput))
+            {
+                const string message = "You need to type some numbers to perform operations!:)";
+                Console.WriteLine(message);
+                return true;
+            }
+            Calculate(userInput);
+            return true;
+        }
+    }
+}
