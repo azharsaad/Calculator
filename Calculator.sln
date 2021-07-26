@@ -36,8 +36,8 @@ namespace Calculator
         public static void Calculate(string input)
         {
             //Regex
-            var number = Regex.Matches(input, "[0-9]+").Cast<Match>().Select(m => m.Value).ToArray();
-            var operation = Regex.Matches(input, @"[+-\/*]").Cast<Match>().Select(m => m.Value).ToArray();
+            int number = Regex.Matches(input, "[0-9]+").Cast<Match>().Select(m => m.Value).ToArray();
+            int operation = Regex.Matches(input, @"[+-\/*]").Cast<Match>().Select(m => m.Value).ToArray();
 
             try
             {
@@ -50,8 +50,8 @@ namespace Calculator
                     Calculate(Console.ReadLine());
                 }
                 double result = numbersToBeCalculated[0];
-                var j = 0;
-                for (var i = 1; i < numbersToBeCalculated.Length; i++)
+                int j = 0;
+                for (int i = 1; i < numbersToBeCalculated.Length; i++)
                 {
                     switch (operations[j])
                     {
@@ -97,15 +97,14 @@ namespace Calculator
 
         private static bool CalculatorOn()
         {
-            var userInput = Console.ReadLine();
+            int userInput = Console.ReadLine();
             if (String.IsNullOrEmpty(userInput))
             {
                 const string message = "You need to type some numbers to perform operations!:)";
                 Console.WriteLine(message);
                 return true;
             }
-            if (userInput.ToLower() == "exit")
-                return false;
+
             Calculate(userInput);
             return true;
         }
